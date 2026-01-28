@@ -2241,18 +2241,23 @@ elif seite == "⚙️ Einstellungen":
     pfade = {
         "Extraktor-Module": EXTRAKTOR_PATH,
         "Feedback-System": FEEDBACK_PATH,
-        "config.json": os.path.join(EXTRAKTOR_PATH, "config.json"),
-        "Beauftragungsvertrag": os.path.join(EXTRAKTOR_PATH, "vorlagen", "Beauftragungsvertrag_Vorlage.docx"),
-        "Rahmenvertrag": os.path.join(EXTRAKTOR_PATH, "vorlagen", "Rahmenvertrag_Vorlage.docx"),
-        "Generierte Verträge": os.path.join(EXTRAKTOR_PATH, "vertraege"),
-        "QR-Codes & Feedbacks": os.path.expanduser("~/feedbacks"),
-        "Environment (.env)": env_path,
+        "config.json": CONFIG_PATH,
+        "Beauftragungsvertrag": os.path.join(VORLAGEN_PATH, "Beauftragungsvertrag_Vorlage.docx"),
+        "Rahmenvertrag": os.path.join(VORLAGEN_PATH, "Rahmenvertrag_Vorlage.docx"),
+        "Generierte Verträge": TEMP_DIR if IS_CLOUD else os.path.join(APP_DIR, "vertraege"),
+        "QR-Codes & Feedbacks": "(Cloud: nicht verfügbar)" if IS_CLOUD else os.path.expanduser("~/feedbacks"),
+        "Environment": "st.secrets (Cloud)" if IS_CLOUD else env_path,
     }
 
     pfad_html = ""
     for label, pfad in pfade.items():
-        exists = os.path.exists(pfad)
-        dot = "green" if exists else "red"
+        # Spezielle Cloud-Hinweise sind immer "grün" (Info)
+        if pfad and (pfad.startswith("(") or pfad.startswith("st.secrets")):
+            dot = "blue"
+            exists = True
+        else:
+            exists = os.path.exists(pfad) if pfad else False
+            dot = "green" if exists else "red"
         pfad_html += f'<div style="padding:0.3rem 0;"><span class="status-dot {dot}"></span> <strong style="color:#c4b5fd;">{label}:</strong> <code style="color:#8b8fa3; background:#111118; padding:2px 6px; border-radius:4px; font-size:0.8rem;">{pfad}</code></div>'
 
     st.markdown(f'<div class="dark-card">{pfad_html}</div>', unsafe_allow_html=True)
