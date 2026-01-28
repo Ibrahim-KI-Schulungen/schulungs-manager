@@ -654,6 +654,8 @@ if "last_success" not in st.session_state:
 
 def log_aktion(typ: str, beschreibung: str, erfolg: bool = True, details: dict = None, ergebnis: dict = None):
     """Loggt eine Aktion in die Historie mit optionalen Details."""
+    if "letzte_aktionen" not in st.session_state:
+        st.session_state.letzte_aktionen = []
     st.session_state.letzte_aktionen.insert(0, {
         "zeit": datetime.now().strftime("%H:%M:%S"),
         "typ": typ,
@@ -1756,7 +1758,9 @@ elif seite == "📧 Briefing erstellen":
         col1, col2 = st.columns(2)
 
         with col1:
-            trainer = st.text_input("Trainer (Vorname)*", value=get_ad("trainer").split()[0] if get_ad("trainer") else "")
+            trainer_full = get_ad("trainer", "")
+            trainer_vorname = trainer_full.split()[0] if trainer_full and trainer_full.strip() else ""
+            trainer = st.text_input("Trainer (Vorname)*", value=trainer_vorname)
             schulungsname = st.text_input("Schulungsname*", value=get_ad("schulungsname"))
             kunde = st.text_input("Kunde/Firma", value=get_ad("kunde") or get_ad("firma_ort"))
 
@@ -1796,7 +1800,8 @@ elif seite == "📧 Briefing erstellen":
         if not trainer.strip() or not schulungsname.strip():
             st.error("Trainer und Schulungsname sind Pflichtfelder!")
         else:
-            vorname = trainer.strip().split()[0]
+            trainer_parts = trainer.strip().split()
+            vorname = trainer_parts[0] if trainer_parts else trainer.strip()
 
             # Ort-Info je nach Format
             if format_val == "Remote":

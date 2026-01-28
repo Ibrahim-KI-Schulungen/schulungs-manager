@@ -16,7 +16,7 @@ def get_supabase_config():
     try:
         url = st.secrets.get("SUPABASE_URL", "")
         key = st.secrets.get("SUPABASE_KEY", "")
-    except:
+    except Exception:
         import os
         url = os.getenv("SUPABASE_URL", "")
         key = os.getenv("SUPABASE_KEY", "")
@@ -45,7 +45,7 @@ def supabase_request(method: str, endpoint: str, data: dict = None) -> dict:
         elif method == "DELETE":
             r = requests.delete(full_url, headers=headers, timeout=10)
 
-        if r.status_code in [200, 201]:
+        if r.status_code in [200, 201, 204]:
             return {"success": True, "data": r.json() if r.text else []}
         else:
             return {"success": False, "error": f"Status {r.status_code}: {r.text}"}
@@ -200,14 +200,17 @@ def render_status_card(angebot: dict, show_actions: bool = True):
     # Tage berechnen
     tage_info = ""
     if angebot.get("schulung_datum"):
-        schulung = datetime.strptime(angebot["schulung_datum"], "%Y-%m-%d").date()
-        diff = (schulung - date.today()).days
-        if diff > 0:
-            tage_info = f"Noch {diff} Tage"
-        elif diff == 0:
-            tage_info = "Heute!"
-        else:
-            tage_info = f"Vor {abs(diff)} Tagen"
+        try:
+            schulung = datetime.strptime(angebot["schulung_datum"], "%Y-%m-%d").date()
+            diff = (schulung - date.today()).days
+            if diff > 0:
+                tage_info = f"Noch {diff} Tage"
+            elif diff == 0:
+                tage_info = "Heute!"
+            else:
+                tage_info = f"Vor {abs(diff)} Tagen"
+        except (ValueError, TypeError):
+            tage_info = ""
 
     # Rechnungsdaten vorhanden?
     rechnungsdaten_ok = bool(angebot.get("rechnungs_email"))
@@ -588,13 +591,16 @@ def get_pipeline_notifications() -> List[dict]:
     angebote = get_angebote("warte_termin")
     for a in angebote:
         if a.get("erinnerung_datum"):
-            erinnerung = datetime.strptime(a["erinnerung_datum"], "%Y-%m-%d").date()
-            if erinnerung <= heute:
-                notifications.append({
-                    "type": "warning",
-                    "icon": "🟡",
-                    "text": f"Termin nachfragen: {a.get('kunde')}",
-                    "link": "angebots_pipeline"
-                })
+            try:
+                erinnerung = datetime.strptime(a["erinnerung_datum"], "%Y-%m-%d").date()
+                if erinnerung <= heute:
+                    notifications.append({
+                        "type": "warning",
+                        "icon": "🟡",
+                        "text": f"Termin nachfragen: {a.get('kunde')}",
+                        "link": "angebots_pipeline"
+                    })
+            except (ValueError, TypeError):
+                pass
 
     return notifications

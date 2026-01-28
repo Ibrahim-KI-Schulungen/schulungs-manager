@@ -116,7 +116,7 @@ class NotionSync:
                 jahr = parts[2]
                 return f"{jahr}-{monat}-{tag}"
             return None
-        except:
+        except (ValueError, TypeError, IndexError):
             return None
 
     def _hole_select_wert(self, feld: str, wert: Any) -> Optional[str]:

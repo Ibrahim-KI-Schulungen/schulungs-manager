@@ -15,7 +15,7 @@ def get_supabase_config():
     try:
         url = st.secrets.get("SUPABASE_URL", "")
         key = st.secrets.get("SUPABASE_KEY", "")
-    except:
+    except Exception:
         import os
         url = os.getenv("SUPABASE_URL", "")
         key = os.getenv("SUPABASE_KEY", "")
@@ -117,9 +117,15 @@ def export_belege_excel(belege: List[dict]) -> bytes:
             cell.alignment = Alignment(horizontal="center")
 
         # Daten
+        def safe_float(val, default=0.0):
+            try:
+                return float(val) if val is not None else default
+            except (ValueError, TypeError):
+                return default
+
         for row, beleg in enumerate(belege, 2):
             ws.cell(row=row, column=1, value=beleg.get("datum", ""))
-            ws.cell(row=row, column=2, value=float(beleg.get("betrag", 0)))
+            ws.cell(row=row, column=2, value=safe_float(beleg.get("betrag", 0)))
             ws.cell(row=row, column=3, value=beleg.get("beschreibung", ""))
             ws.cell(row=row, column=4, value=beleg.get("kategorie", ""))
             ws.cell(row=row, column=5, value=beleg.get("notiz", ""))
@@ -128,7 +134,7 @@ def export_belege_excel(belege: List[dict]) -> bytes:
         sum_row = len(belege) + 2
         ws.cell(row=sum_row, column=1, value="SUMME")
         ws.cell(row=sum_row, column=1).font = Font(bold=True)
-        total = sum(float(b.get("betrag", 0)) for b in belege)
+        total = sum(safe_float(b.get("betrag", 0)) for b in belege)
         ws.cell(row=sum_row, column=2, value=total)
         ws.cell(row=sum_row, column=2).font = Font(bold=True)
 

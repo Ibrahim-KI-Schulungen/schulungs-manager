@@ -98,7 +98,8 @@ class VertragGenerator:
 
         # Bei UG/GmbH den ersten Teil nehmen
         if "UG" in trainer_name or "GmbH" in trainer_name:
-            return trainer_name.split()[0]
+            parts = trainer_name.split()
+            return parts[0] if parts else "Unbekannt"
 
         # Letztes Wort ist Nachname
         teile = trainer_name.split()
