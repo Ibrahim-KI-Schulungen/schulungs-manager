@@ -329,8 +329,8 @@ def render_beleg_center():
 def render_beleg_modal():
     """Modal zum Hinzufügen/Bearbeiten eines Belegs"""
 
-    beleg = st.session_state.get("edit_beleg", {})
-    edit_mode = beleg is not None and beleg != {}
+    beleg = st.session_state.get("edit_beleg") or {}
+    edit_mode = bool(beleg)
 
     st.markdown("---")
     st.subheader("✏️ Beleg bearbeiten" if edit_mode else "➕ Neuer Beleg")
@@ -338,13 +338,25 @@ def render_beleg_modal():
     with st.form("beleg_form"):
         col1, col2 = st.columns(2)
         with col1:
-            datum = st.date_input("Datum *", value=datetime.strptime(beleg.get("datum"), "%Y-%m-%d").date() if beleg.get("datum") else date.today())
-            kategorie = st.selectbox("Kategorie", options=KATEGORIEN, index=KATEGORIEN.index(beleg.get("kategorie")) if beleg.get("kategorie") in KATEGORIEN else 0)
-        with col2:
-            betrag = st.number_input("Betrag (€) *", value=float(beleg.get("betrag", 0)), min_value=0.0, step=10.0)
+            # BUG FIX: Prüfe ob beleg und datum existieren bevor strptime
+            default_datum = date.today()
+            if beleg and beleg.get("datum"):
+                try:
+                    default_datum = datetime.strptime(beleg["datum"], "%Y-%m-%d").date()
+                except (ValueError, TypeError):
+                    pass
+            datum = st.date_input("Datum *", value=default_datum)
 
-        beschreibung = st.text_input("Beschreibung *", value=beleg.get("beschreibung", ""))
-        notiz = st.text_area("Notiz", value=beleg.get("notiz", ""))
+            # Kategorie mit sicherem Index
+            kat_index = 0
+            if beleg and beleg.get("kategorie") in KATEGORIEN:
+                kat_index = KATEGORIEN.index(beleg["kategorie"])
+            kategorie = st.selectbox("Kategorie", options=KATEGORIEN, index=kat_index)
+        with col2:
+            betrag = st.number_input("Betrag (€) *", value=float(beleg.get("betrag", 0)) if beleg else 0.0, min_value=0.0, step=10.0)
+
+        beschreibung = st.text_input("Beschreibung *", value=beleg.get("beschreibung", "") if beleg else "")
+        notiz = st.text_area("Notiz", value=beleg.get("notiz", "") if beleg else "")
 
         col1, col2, col3 = st.columns(3)
         with col1:
