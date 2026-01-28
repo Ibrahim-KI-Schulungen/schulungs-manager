@@ -1,0 +1,142 @@
+{
+  "firma": {
+    "namen": ["AI-Z GmbH", "AI-Z Group", "KI Schulungen"],
+    "domains": ["ai-z-group.com", "kischulungen.com", "ai-z.de"],
+    "adresse": "Königstraße 26, 70173 Stuttgart"
+  },
+  "interne_personen": [
+    {
+      "name": "Oumar Langer",
+      "rolle": "Geschäftsführer",
+      "emails": ["o.langer@ai-z-group.com", "oumar@kischulungen.com", "langeroumar@gmail.com"]
+    },
+    {
+      "name": "Ibrahim Kamara",
+      "rolle": "Operations",
+      "emails": ["ibrahim@kischulungen.com"]
+    }
+  ],
+  "bekannte_trainer": [
+    {
+      "name": "Nico Puhlmann",
+      "kurznamen": ["Nico"],
+      "strasse": "Gattenhöferweg 24",
+      "plz": "61440",
+      "ort": "Oberursel",
+      "email": "nico@nico-puhlmann.de",
+      "telefon": "0176 4985278"
+    },
+    {
+      "name": "Svend Erik Kundby-Nielsen",
+      "kurznamen": ["Svend"],
+      "strasse": "Strausberger Platz 1",
+      "plz": "10243",
+      "ort": "Berlin",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Moritz Sauer UG (haftungsbeschränkt)",
+      "kurznamen": ["Moritz"],
+      "strasse": "Rubensstraße 58",
+      "plz": "12157",
+      "ort": "Berlin",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Lukas Sontheimer",
+      "kurznamen": ["Lukas"],
+      "strasse": "Podbielskistraße 112",
+      "plz": "30177",
+      "ort": "Hannover",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Alexander Ziebell",
+      "kurznamen": ["Alex"],
+      "strasse": "Leinestr. 21",
+      "plz": "12049",
+      "ort": "Berlin",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Oumar Langer",
+      "kurznamen": ["Oumar"],
+      "strasse": "Königstraße 26",
+      "plz": "70173",
+      "ort": "Stuttgart",
+      "email": "oumar@kischulungen.com",
+      "telefon": "01575 2105 947"
+    },
+    {
+      "name": "Simone Krotz",
+      "kurznamen": ["Simone"],
+      "strasse": "Gaußstraße 15",
+      "plz": "70193",
+      "ort": "Stuttgart",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Carina Schoppe",
+      "kurznamen": ["Carina"],
+      "strasse": "Unit 28, 436 Annstr.",
+      "plz": "4000",
+      "ort": "Brisbane, Australia",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Katherina Jakob",
+      "kurznamen": ["Katherina"],
+      "strasse": "",
+      "plz": "74564",
+      "ort": "Crailsheim",
+      "email": "",
+      "telefon": "",
+      "notiz": "Straße fehlt noch"
+    },
+    {
+      "name": "Yavuz Gök",
+      "kurznamen": ["Yavuz"],
+      "strasse": "Steinbuttstraße 48",
+      "plz": "70378",
+      "ort": "Stuttgart",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Patrick Rieger",
+      "kurznamen": ["Patrick"],
+      "strasse": "Schwalbenstrasse 16",
+      "plz": "63263",
+      "ort": "Neu-Isenburg",
+      "email": "",
+      "telefon": ""
+    },
+    {
+      "name": "Omar Ben Brahim",
+      "kurznamen": ["Omar"],
+      "strasse": "Im Neuenheimer Feld 680",
+      "plz": "69120",
+      "ort": "Heidelberg",
+      "email": "",
+      "telefon": ""
+    }
+  ],
+  "bekannte_auftraggeber": [
+    {
+      "name": "GFU Cyrus AG",
+      "kurznamen": ["GFU"],
+      "domains": ["gfu.net"]
+    },
+    {
+      "name": "NobleProg",
+      "kurznamen": [],
+      "domains": ["nobleprog.com", "nobleprog.de", "nobleprog.ch"]
+    }
+  ]
+}

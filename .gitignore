@@ -1,0 +1,43 @@
+# Secrets - NIEMALS committen
+.env
+.env.*
+.env.local
+.env.production
+*.env
+.streamlit/secrets.toml
+secrets.toml
+*secret*
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# Generierte Dateien
+vertraege/
+*.docx
+!vorlagen/*.docx
+
+# Streamlit
+.streamlit/*.toml
+!.streamlit/config.toml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
