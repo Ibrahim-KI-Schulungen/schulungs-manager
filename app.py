@@ -2181,7 +2181,13 @@ elif seite == "⚙️ Einstellungen":
 
     env_path = os.path.expanduser("~/prozess-labor/.env")
     env_vars = {}
-    if os.path.exists(env_path):
+    if IS_CLOUD:
+        # Cloud: Secrets aus st.secrets lesen
+        try:
+            env_vars = dict(st.secrets)
+        except Exception:
+            env_vars = {}
+    elif os.path.exists(env_path):
         from dotenv import dotenv_values
         env_vars = dotenv_values(env_path)
 
