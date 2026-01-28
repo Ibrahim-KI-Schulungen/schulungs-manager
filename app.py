@@ -100,6 +100,10 @@ else:
         VORLAGEN_PATH = os.path.expanduser("~/prozess-labor/03_umsetzung/schulungs-extraktor/vorlagen")
     TEMP_DIR = None  # Lokal: Normale Pfade verwenden
 
+# Zusätzliche Pfade für Einstellungen-Seite
+EXTRAKTOR_PATH = MODULES_PATH
+FEEDBACK_PATH = os.path.join(APP_DIR, "modules") if IS_CLOUD else os.path.expanduser("~/prozess-labor/03_umsetzung/feedback-system")
+
 sys.path.insert(0, MODULES_PATH)
 
 # Module importieren
