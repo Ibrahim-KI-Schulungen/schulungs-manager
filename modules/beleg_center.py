@@ -415,7 +415,13 @@ def render_session_modal():
     aktuelle = get_einstellung("naechste_steuer_session")
 
     with st.form("session_form"):
-        default_date = datetime.strptime(aktuelle, "%Y-%m-%d").date() if aktuelle else date.today() + timedelta(days=14)
+        default_date = date.today() + timedelta(days=14)
+        if aktuelle:
+            try:
+                default_date = datetime.strptime(aktuelle, "%Y-%m-%d").date()
+            except (ValueError, TypeError):
+                pass
+
         session_datum = st.date_input("Datum der nächsten Session", value=default_date)
 
         # Email-Erinnerung (Coming Soon)
@@ -423,14 +429,23 @@ def render_session_modal():
 
         col1, col2 = st.columns(2)
         with col1:
-            if st.form_submit_button("💾 Speichern", type="primary", use_container_width=True):
-                set_einstellung("naechste_steuer_session", session_datum.isoformat())
-                st.session_state.show_session_modal = False
-                st.rerun()
+            save_btn = st.form_submit_button("💾 Speichern", type="primary", use_container_width=True)
         with col2:
-            if st.form_submit_button("❌ Abbrechen", use_container_width=True):
-                st.session_state.show_session_modal = False
-                st.rerun()
+            cancel_btn = st.form_submit_button("❌ Abbrechen", use_container_width=True)
+
+    # Logik NACH dem Form-Block (wichtig für Streamlit!)
+    if save_btn:
+        result = set_einstellung("naechste_steuer_session", session_datum.isoformat())
+        if result.get("success"):
+            st.success(f"✅ Session für {session_datum.strftime('%d.%m.%Y')} geplant!")
+            st.session_state.show_session_modal = False
+            st.rerun()
+        else:
+            st.error(f"Fehler: {result.get('error', 'Unbekannt')}")
+
+    if cancel_btn:
+        st.session_state.show_session_modal = False
+        st.rerun()
 
 
 def get_beleg_notifications() -> List[dict]:
