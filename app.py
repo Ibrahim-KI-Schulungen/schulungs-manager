@@ -118,6 +118,14 @@ except ImportError as e:
     MODULES_LOADED = False
     IMPORT_ERROR = str(e)
 
+# Backoffice-Module importieren
+try:
+    from angebots_pipeline import render_angebots_pipeline
+    from beleg_center import render_beleg_center
+    BACKOFFICE_LOADED = True
+except ImportError:
+    BACKOFFICE_LOADED = False
+
 # Anthropic SDK für KI-Features
 try:
     import anthropic
@@ -706,6 +714,8 @@ PAGES = [
     "📧 Briefing erstellen",
     "👥 Trainer-Datenbank",
     "📊 Letzte Aktionen",
+    "📑 Angebots-Pipeline",
+    "🧾 Beleg-Center",
     "⚙️ Einstellungen"
 ]
 
@@ -769,6 +779,67 @@ if seite == "🏠 Start":
     </div>
     """, unsafe_allow_html=True)
 
+    # --- Dashboard Notifications ---
+    if BACKOFFICE_LOADED:
+        try:
+            supa_url = get_secret("SUPABASE_URL", "")
+            supa_key = get_secret("SUPABASE_KEY", "")
+            if supa_url and supa_key:
+                import requests
+                from datetime import timedelta
+                headers = {"apikey": supa_key, "Authorization": f"Bearer {supa_key}"}
+                notifications = []
+
+                # Offene Rechnungen
+                resp = requests.get(
+                    f"{supa_url}/rest/v1/angebote?status=eq.rechnung_faellig&select=id",
+                    headers=headers, timeout=5
+                )
+                if resp.ok:
+                    count = len(resp.json())
+                    if count > 0:
+                        notifications.append(("🔴", f"{count} offene Rechnung(en)", "📑 Angebots-Pipeline"))
+
+                # Termine in nächsten 7 Tagen
+                heute = date.today()
+                in_7_tagen = heute + timedelta(days=7)
+                resp = requests.get(
+                    f"{supa_url}/rest/v1/angebote?status=eq.termin_steht&schulung_datum=gte.{heute.isoformat()}&schulung_datum=lte.{in_7_tagen.isoformat()}&select=id",
+                    headers=headers, timeout=5
+                )
+                if resp.ok:
+                    count = len(resp.json())
+                    if count > 0:
+                        notifications.append(("🟡", f"{count} Schulung(en) diese Woche", "📑 Angebots-Pipeline"))
+
+                # Unerledigte Belege
+                resp = requests.get(
+                    f"{supa_url}/rest/v1/belege?erledigt=eq.false&select=id",
+                    headers=headers, timeout=5
+                )
+                if resp.ok:
+                    count = len(resp.json())
+                    if count > 0:
+                        notifications.append(("🟠", f"{count} offene Beleg(e)", "🧾 Beleg-Center"))
+
+                if notifications:
+                    st.markdown("#### 🔔 Aktionen erforderlich")
+                    cols = st.columns(len(notifications))
+                    for i, (emoji, text, target) in enumerate(notifications):
+                        with cols[i]:
+                            st.markdown(f"""
+                            <div style="padding:0.75rem; background:rgba(239,68,68,0.1); border-radius:8px;
+                                border:1px solid rgba(239,68,68,0.3); text-align:center;">
+                                <span style="font-size:1.2rem;">{emoji}</span>
+                                <div style="color:#e2e8f0; font-size:0.9rem; margin-top:4px;">{text}</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+                            if st.button(f"→ Öffnen", key=f"notif_{i}", use_container_width=True):
+                                nav_zu(target)
+                    st.markdown("---")
+        except Exception:
+            pass  # Notifications sind optional, Fehler ignorieren
+
     # --- 2x3 Menu Grid ---
     menu_items = [
         ("📋", "Notion Eintragen", "📋 Notion-Sync"),
@@ -804,6 +875,25 @@ if seite == "🏠 Start":
             """, unsafe_allow_html=True)
             if st.button(f"→ {title}", key=f"mc_{target}", use_container_width=True):
                 nav_zu(target)
+
+    # Row 3 - Backoffice
+    if BACKOFFICE_LOADED:
+        st.markdown("#### 💼 Backoffice")
+        backoffice_items = [
+            ("📑", "Angebots-Pipeline", "📑 Angebots-Pipeline"),
+            ("🧾", "Beleg-Center", "🧾 Beleg-Center"),
+        ]
+        col7, col8, col9 = st.columns(3, gap="medium")
+        for col, (icon, title, target) in zip([col7, col8], backoffice_items):
+            with col:
+                st.markdown(f"""
+                <div class="menu-card">
+                    <div class="menu-card-icon">{icon}</div>
+                    <div class="menu-card-title">{title}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                if st.button(f"→ {title}", key=f"mc_{target}", use_container_width=True):
+                    nav_zu(target)
 
     # --- Quick-Analyze Bereich ---
     st.markdown("---")
@@ -2160,6 +2250,28 @@ elif seite == "📊 Letzte Aktionen":
             st.rerun()
     else:
         st.info("Noch keine Aktionen durchgeführt.")
+
+
+# ============================================================
+# ANGEBOTS-PIPELINE (Backoffice)
+# ============================================================
+elif seite == "📑 Angebots-Pipeline":
+    if BACKOFFICE_LOADED:
+        render_angebots_pipeline()
+    else:
+        st.error("Backoffice-Module konnten nicht geladen werden.")
+        st.info("Stelle sicher, dass angebots_pipeline.py im modules/ Ordner liegt.")
+
+
+# ============================================================
+# BELEG-CENTER (Backoffice)
+# ============================================================
+elif seite == "🧾 Beleg-Center":
+    if BACKOFFICE_LOADED:
+        render_beleg_center()
+    else:
+        st.error("Backoffice-Module konnten nicht geladen werden.")
+        st.info("Stelle sicher, dass beleg_center.py im modules/ Ordner liegt.")
 
 
 # ============================================================
