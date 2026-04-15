@@ -1823,8 +1823,10 @@ Erstelle professionelle, freundliche Trainer-Briefings auf Deutsch.
 Regeln:
 - Duze den Trainer
 - Schreibe warm aber professionell
-- Füge IMMER "[FEEDBACK-LINK]" als Platzhalter ein
-- Erwähne den QR-Code für Feedback
+- Füge IMMER BEIDE Platzhalter ein:
+  - "[FEEDBACK-LINK]" im Feedback-Block (für die Teilnehmer, QR-Code erwähnen)
+  - "[ASSESSMENT-LINK]" im Assessment-Block (für den Trainer selbst, kurze Selbsteinschätzung nach der Schulung, ca. 2 Min)
+- Die beiden Blöcke (Feedback und Assessment) klar trennen und beschriften
 - Unterschreibe mit "Ibrahim"
 - Erfinde KEINE Informationen - nutze nur die gegebenen Daten
 - Baue die zusätzlichen Hinweise elegant ein (nicht als Aufzählung, sondern in den Fließtext)"""
@@ -1885,10 +1887,19 @@ Ort: {ort_info}"""
 
                 briefing_text += """
 
-Am Ende der Schulung bitte den Teilnehmenden den Feedback-Link teilen:
-[FEEDBACK-LINK]
+Feedback
 
-Du bekommst auch einen QR-Code, den du ausdrucken oder auf dem Beamer zeigen kannst.
+Bitte teile am Ende der Schulung den Feedback-Link mit den Teilnehmern.
+Den QR-Code findest du im Anhang — einfach auf dem Bildschirm zeigen.
+
+Link: [FEEDBACK-LINK]
+
+Assessment
+
+Bitte fülle nach der Schulung den Assessment-Link aus.
+Kurze Selbsteinschätzung zu Vorbereitung, Teilnehmer-Engagement und Inhalten — dauert nur 2 Minuten.
+
+Link: [ASSESSMENT-LINK]
 
 Bei Fragen melde dich jederzeit.
 
@@ -1955,6 +1966,7 @@ Ibrahim"""
                 try:
                     html_body = briefing_text.replace("\n", "<br>")
                     html_body = html_body.replace("[FEEDBACK-LINK]", "<b>[FEEDBACK-LINK]</b>")
+                    html_body = html_body.replace("[ASSESSMENT-LINK]", "<b>[ASSESSMENT-LINK]</b>")
                     html_body = html_body.replace('"', '\\"')
 
                     applescript = f'''
